@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temporizador</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #1e3c72, #2a5298);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            transition: color 0.3s ease;
+        }
+
+        #timeoutMessage {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .dynamic-bg {
+            animation: colorChange 10s infinite;
+        }
+
+        @keyframes colorChange {
+            0% { background: #1e3c72; }
+            25% { background: #2a5298; }
+            50% { background: #3b5998; }
+            75% { background: #4c6ef5; }
+            100% { background: #1e3c72; }
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #1e3c72;
+            background: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background: #ff758c;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        #newYearTimer {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            padding: 10px;
+            background: rgba(255, 165, 0, 0.2);
+            border: 2px solid orange;
+            border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #FFA500;
+            text-shadow: 2px 2px 5px rgba(255, 165, 0, 0.8);
+        }
+    </style>
+</head>
+<body class="dynamic-bg">
+    <div class="container">
+        <h1>Bem-vindo à Página !</h1>
+        <h2 id="counter">Contador: 0</h2>
+        <div id="timeoutMessage">Mensagem: "Olá! Esta mensagem apareceu após 5 segundos!"</div>
+        <div id="newYearTimer">Tempo restante para o Ano Novo de 2025: -- dias, -- horas, -- minutos, -- segundos</div>
+        <button id="resetButton">Reiniciar Contador</button>
+    </div>
+
+    <script>
+        // Contador com setInterval
+        let counter = 0;
+        const counterElement = document.getElementById('counter');
+        const timeoutMessage = document.getElementById('timeoutMessage');
+        const resetButton = document.getElementById('resetButton');
+        const newYearTimerElement = document.getElementById('newYearTimer');
+
+        const updateCounter = () => {
+            counter++;
+            counterElement.textContent = `Contador: ${counter}`;
+
+            // Alterar cor dinamicamente com base no valor do contador
+            counterElement.style.color = `hsl(${counter * 30 % 360}, 70%, 50%)`;
+        };
+
+        const startCounter = () => {
+            counter = 0;
+            timeoutMessage.style.display = 'none';
+            counterElement.style.color = 'white';
+            counterInterval = setInterval(() => {
+                updateCounter();
+
+                if (counter >= 10) {
+                    clearInterval(counterInterval);
+                    counterElement.textContent += " (Parado após 10 segundos)";
+                }
+            }, 1000);
+
+            setTimeout(() => {
+                timeoutMessage.style.display = 'block';
+                timeoutMessage.textContent = `Mensagem: "Olá! Esta mensagem apareceu após ${counter} segundos!"`;
+            }, 5000);
+        };
+
+        // Atualizar temporizador para o Ano Novo de 2025
+        const updateNewYearTimer = () => {
+            const now = new Date();
+            const newYear = new Date('January 1, 2025 00:00:00');
+            const timeDifference = newYear - now;
+
+            const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+            newYearTimerElement.textContent = `Tempo restante para o Ano Novo de 2025: ${days} dias, ${hours} horas, ${minutes} minutos, ${seconds} segundos`;
+        };
+
+        let counterInterval = null;
+        startCounter();
+        setInterval(updateNewYearTimer, 1000);
+
+        // Reiniciar Contador ao clicar no botão
+        resetButton.addEventListener('click', () => {
+            clearInterval(counterInterval);
+            startCounter();
+        });
+    </script>
+</body>
+</html>
